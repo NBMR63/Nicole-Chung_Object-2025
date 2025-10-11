@@ -1,0 +1,15 @@
+Idea: A water bottle that yells at me when I don’t drink enough water per day. 
+
+I didn’t get the specifics about how I will make everything work yet. 
+Still, I think the working process of my water bottle will be something like this series of steps: 
+
+Some sort of sensor detects that the water bottle is upright. 
+The water level sensor (which I believe could be a cylindrical-shaped hydrostatic sensor or a similar device) measures the amount of water remaining in the bottle compared to the start of the day and records the difference between the current water level and the initial level. 
+
+Specific checkpoints in the day, such as when one-third of the day has passed, compare the total difference between the current water level and the desired daily water consumption (3L in Colorado). 
+
+If the water consumed doesn’t reach the desired goal, the small screen on the water bottle will display a mad face and play a pre-recorded message threatening to drink more water, accompanied by a failed buzzer sound. 
+
+However, if it reaches the desired goal, it will turn into a cheerful face and encourage me to drink more water. At the end of the day, presumably about 11:45 in the evening when I go to bed(hopefully), it runs through the total water consumption and lets out a more intense response than the checkpoints, moving screens up and down perhaps, playing out some short music. And at 12:00, it will reset and be ready to live another day. 
+
+One thing I still haven't figured out is how I will keep an accurate record of water consumption, since I’ll need to refill the water bottle multiple times a day. I might need a button or some other indicator to let me know when I’m refilling the water. 
