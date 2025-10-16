@@ -1,1 +1,13 @@
+Idea: 
+  - Water bottles that yell at you when you don't drink enough water per day. 
 
+Thought progress: 
+  - Essential functions: 
+    - Measures leftover water
+    - Compare the progress of water consumption every day
+      - print out different results based on the True/False, whether it fulfilled the reqirements
+
+  - Subessential functions: 
+    - Detect whether the water bottle is upright and only measure the leftover water when it's upright
+    - Resets the process every day
+    - Check the water consumption progress 4 times a day
