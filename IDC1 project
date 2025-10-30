@@ -5,9 +5,318 @@ Thought progress:
   - Essential functions: 
     - Measures leftover water
     - Compare the progress of water consumption every day
-      - print out different results based on the True/False, whether it fulfilled the reqirements
+      - print out different results based on the True/False, whether it fulfilled the requirements
 
   - Subessential functions: 
     - Detect whether the water bottle is upright and only measure the leftover water when it's upright
     - Resets the process every day
     - Check the water consumption progress 4 times a day
+
+Execution: 
+  - Demo video: 
+
+Improvements for IDC2
+  - better (fully waterproof) enclosure
+  - more precise measurements using the tilt sensor module
+  - Resets the code every 11 hrs 59 minutes
+
+Code used: 
+
+//Just empty space cuz I don't like my code to be touching the top for absolutely no reason 
+
+
+// Time in millis sorted =
+  // 1000 = 1 sec
+  // 10000 = 10 sec
+  // 60000 = 1 min
+  // 3600000 = 1 hour
+  // 86400000 = 24 hours
+  // 86340000 = 11 hrs 59 min
+
+//Calling neccessary libraries in
+#include "LiquidCrystal.h"
+#include "Arduino.h"
+#include "DFRobotDFPlayerMini.h"
+
+// Set up for MP3 player
+#if (defined(ARDUINO_AVR_UNO) || defined(ESP8266))   // Using a soft serial port -- for MP3 player
+#include <SoftwareSerial.h>
+SoftwareSerial softSerial(/*rx =*/8, /*tx =*/9);     // for mp3 player - connected wire port
+
+#define FPSerial softSerial
+    #else
+#define FPSerial Serial1
+    #endif
+
+
+
+//Int variables: 
+//Set up for LCD monitor and real time
+int Contrast=75;
+
+unsigned long messageTime;                          // to make messages run based on time
+unsigned long time;                                 // to make everything else run based on time
+
+unsigned long lastCheckedTime = millis();
+
+bool displayMessage = false;                 // Variable to control message display length
+unsigned long messageDuration = 10000;        // Variable for message display length
+
+
+// Set up for FSR sensor
+int fsrPin = 0;                              // the FSR and 10K pulldown are connected to a0
+int fsrReading;                              // the analog reading from the FSR resistor divider
+
+// Set up for LCD monitor
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);  
+
+
+// Keep track of changes in Waterbottle remains
+int waterDelta = 0;                           // change in water level - temporary
+int checkIns = 0;                             // quarterly checking for hydration - temporary
+int totalWaterDrank = 0;                           // total changes in water level - overall
+
+int waterDrank = 0;                           // 
+int dailyGoal = 3000;                         // recommended amount for colorado residence to drink per day
+
+int pastWater = 0;                            // last water value
+int newWater = 0;                             // current water value
+
+bool Dehydrated = false;                              // Variable determining which message will be printed
+bool testing;                          // variable for trouble shooting
+
+
+
+//Counting how many times the waterbottle was emptied: 
+int rounds = 0;
+
+
+// also for the MP3 player - just a single line, not missing anything
+DFRobotDFPlayerMini myDFPlayer;
+void printDetail(uint8_t type, int value);
+
+
+
+void setup() {
+  Serial.begin(9600);
+  analogWrite(6,Contrast);        // For LCD Screen
+  lcd.begin(16, 2);               // For LCD screen
+
+    
+  #if (defined ESP32)
+      FPSerial.begin(9600, SERIAL_8N1, /*rx =*/D3, /*tx =*/D2);
+  #else
+      FPSerial.begin(9600);
+  #endif
+
+  // for MP3 set ups
+  Serial.begin(115200);
+
+  Serial.println();
+  Serial.println(F("DFRobot DFPlayer Mini Demo"));
+  Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
+  
+
+  if (!myDFPlayer.begin(FPSerial, /*isACK = */true, /*doReset = */true)) {  //Use serial to communicate with mp3.
+    Serial.println(F("Unable to begin:"));
+    Serial.println(F("1.Please recheck the connection!"));
+    Serial.println(F("2.Please insert the SD card!"));
+    while(true){
+      delay(0); // Code to compatible with ESP8266 watch dog.
+    }
+  }
+
+  Serial.println(F("DFPlayer Mini online."));
+} 
+
+
+
+
+  
+
+
+void loop(){           
+  newWater = analogRead(fsrPin);                      // Measures the remaining water in the bottle 
+  
+  waterDelta =  pastWater - newWater;                 // Calculating how many water was consumed by comparing the previous data to current one
+
+  pastWater = newWater;                               // After the water consumed was calculated, it changes the past value with the new value
+
+  
+  if(waterDelta > 0){
+    waterDrank += waterDelta;                         // Saving the consumed water in the separate variable; total amounts of water consumed
+    waterDelta = 0;
+    //Serial.println("So this is how much you drank : " + waterDrank);
+  }
+
+
+  Serial.println("Water level: " +  String(newWater) + " Water delta: " + waterDelta + " Total: " + String(waterDrank) + " Time: " + millis());
+  delay(500);
+
+
+// if(millis() >= 15000 && millis() < 25000){
+//   testing = true;
+// }
+
+
+  // Every 6 hours (1/4 of a day)
+  // Change hydration status based on the waterbottle remains
+  if(millis() - lastCheckedTime >= 21600000UL || testing == true){
+
+    totalWaterDrank += waterDrank;                           // add the temporary water consumption data to more permenent variable
+
+    if(waterDrank > 750){
+      Dehydrated = false;
+
+      // Setting up for LCD monitor to run the screen
+      displayMessage = true; 
+      messageTime = millis();
+
+    } else if (waterDrank < 750){
+      Dehydrated = true;
+
+      //Setting up for LCD monitor to run the screen
+      displayMessage = true; 
+      messageTime = millis();
+
+    } else{
+      Serial.println("very still water, it hasn't changed at all.");
+    }
+
+    waterDrank = 0;
+    lastCheckedTime = millis();
+    testing = false;
+
+  }
+
+
+  //for displaying messages to the screen and playing sounds
+  if (displayMessage == true){
+      if(millis() - messageTime <= messageDuration){
+          if(Dehydrated == true){
+
+              displayMessage = true;    
+
+              myDFPlayer.volume(15);  //Set volume value. From 0 to 30
+              myDFPlayer.play(1);    //Play the first mp3 - warning
+
+              lcd.setCursor(0, 0);                        
+              lcd.print("Warning!");
+              lcd.setCursor(0, 1);
+              lcd.print("Need more water!");
+
+              delay(messageDuration);
+              lcd.noDisplay();
+              myDFPlayer.stop();       
+
+
+          } else if(Dehydrated == false){
+              displayMessage = true;
+
+              myDFPlayer.volume(15);  //Set volume value. From 0 to 30
+              myDFPlayer.play(2);    //Play the second mp3 - encouragement
+
+              lcd.setCursor(0, 0);
+              lcd.print("Yayy!");
+              lcd.setCursor(0, 1);
+              lcd.print("U R doing great!");
+              
+              delay(messageDuration);
+              lcd.noDisplay();
+              myDFPlayer.stop();
+
+          } else {
+              displayMessage = false;
+              Serial.println("else error from else statement from ");
+          }
+          
+      } else {
+          displayMessage = false;
+          Serial.println("else error from second if statement");
+      }
+      
+  }
+
+
+}
+//gotta work on here but donno how to  == postpone
+//   static unsigned long time = millis();
+  
+//   if (millis() - messageTime > 5000) {
+//     time = millis();
+//     delay(2000);
+//     myDFPlayer.stop();
+    
+//   }
+  
+//   if (myDFPlayer.available()) {
+//     printDetail(myDFPlayer.readType(), myDFPlayer.read());              //Print the detail message from DFPlayer to handle different errors and states.
+//   }
+// }
+
+
+// for MP3 trouble shooting
+  void printDetail(uint8_t type, int value){
+    switch (type) {
+      case TimeOut:
+        Serial.println(F("Time Out!"));
+        break;
+      case WrongStack:
+        Serial.println(F("Stack Wrong!"));
+        break;
+      case DFPlayerCardInserted:
+        Serial.println(F("Card Inserted!"));
+        break;
+      case DFPlayerCardRemoved:
+        Serial.println(F("Card Removed!"));
+        break;
+      case DFPlayerCardOnline:
+        Serial.println(F("Card Online!"));
+        break;
+      case DFPlayerUSBInserted:
+        Serial.println("USB Inserted!");
+        break;
+      case DFPlayerUSBRemoved:
+        Serial.println("USB Removed!");
+        break;
+      case DFPlayerPlayFinished:
+        Serial.print(F("Number:"));
+        Serial.print(value);
+        Serial.println(F(" Play Finished!"));
+        break;
+      case DFPlayerError:
+        Serial.print(F("DFPlayerError:"));
+        switch (value) {
+          case Busy:
+            Serial.println(F("Card not found"));
+            break;
+          case Sleeping:
+            Serial.println(F("Sleeping"));
+            break;
+          case SerialWrongStack:
+            Serial.println(F("Get Wrong Stack"));
+            break;
+          case CheckSumNotMatch:
+            Serial.println(F("Check Sum Not Match"));
+            break;
+          case FileIndexOut:
+            Serial.println(F("File Index Out of Bound"));
+            break;
+          case FileMismatch:
+            Serial.println(F("Cannot Find File"));
+            break;
+          case Advertise:
+            Serial.println(F("In Advertise"));
+            break;
+          default:
+            break;
+        }
+        break;
+      default:
+        break;
+    }
+
+  }
+
+
+
