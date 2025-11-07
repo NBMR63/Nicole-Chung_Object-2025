@@ -1,11 +1,21 @@
-My IDC1 was a water bottle that yells at me when I do not drink enough water. 
-For IDC2, instead of attaching the device on the water bottle itself, 
-I'm making a external station that you can put the water bottle on to measure the remaining water inside. 
+Idea: 
+  My IDC1 was a water bottle that yells at me when I do not drink enough water. 
+  For IDC2, instead of attaching the device on the water bottle itself, 
+  I'm making a external station that you can put the water bottle on to measure the remaining water inside. 
+  
+  I'm planning to add buttons to choose between different settings, so I can measure different water bottles. 
+  I can indicate whether the water bottle was refilled through some kind of trigger like another button. 
+  It will be a puck shaped base that can be portable enough to carry around, or a station. 
+  The station will looks like a coffee port, that will be in place where I most likely to forget drinking. 
+  
+  It's going to turn the device on when the water bottle is placed on the base, so it save some energy. 
+  Then it will print message based on the weight. And it can also tell how much more water is needed when you press another button. 
 
-I'm planning to add buttons to choose between different settings, so I can measure different water bottles. 
-I can indicate whether the water bottle was refilled through some kind of trigger like another button. 
-It will be a puck shaped base that can be portable enough to carry around, or a station. 
-The station will looks like a coffee port, that will be in place where I most likely to forget drinking. 
-
-It's going to turn the device on when the water bottle is placed on the base, so it save some energy. 
-Then it will print message based on the weight. And it can also tell how much more water is needed when you press another button. 
+Modules I'll use: 
+  - LCD monitor with 4 wire
+    - I used normal wire on LCD monitor, but I need more simplified on so I can make this device compact as possible
+  - Modular buttons
+    - ones that are attached next to each other or on a circuit together already so I can save space? (maybe)
+  - Some sort of trigger(switch)
+    - to control arduino turning on and off based on there's water botton on top of the device or not to save energy(battery)
+ 
