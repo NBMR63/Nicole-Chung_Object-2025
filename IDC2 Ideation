@@ -18,4 +18,6 @@ Modules I'll use:
     - ones that are attached next to each other or on a circuit together already so I can save space? (maybe)
   - Some sort of trigger(switch)
     - to control arduino turning on and off based on there's water botton on top of the device or not to save energy(battery)
+  - Conductivity sensor
+    - Triggers the measuring process when the waterbottle is placed on the station
  
