@@ -1,1 +1,23 @@
+Written Progress: 
+  
+    I initially sought to create a smart water bottle that is portable and measures hydration status in real time, 
+    so it’s easier to check how much water I’ve been consuming and how much more I should drink. Based on the recommended daily water consumption of 3 liters, 
+    I used the FSR sensor to measure the weight of the water bottle to determine how much water it still contains. 
+    And then I create a process to calculate the weight differences and sense the change in the water bottle’s position as I drink. 
+    But then I worried about battery life, so I changed to checking the water remaining every 6 hours for a more efficient measuring system. 
+    
+    For another iteration of the Screaming water bottle, 
+    I started thinking about how chunky and enaesthetic the hydration tracker version attached to the water bottle is. 
+    So, for IDC2, I sought a visually more appealing project with a new mechanism suitable for office or home use. 
+    In this iteration, I switched to a stationized version of IDC1 that can examine multiple types of water bottles and includes more interactive features, 
+    such as buttons and a more varied usage of the LCD monitor. The most challenging part of this iteration was measuring the water bottle’s weight with the FSR sensor. 
+    
+    Unlike in the last iteration, where each module was directly attached to the bottle itself, the sensors in this iteration are located at the bottom of the base. 
+    where the button mechanism is used to press the FSR sensor to measure. 
+    I went through a couple of different variations to figure out the right button mechanisms and their circuit connections. 
+    Then the buttons I added for interactivity were a challenge, since the enclosure for the circuit was having difficulty holding them in place to stabilize 
+    input through the buttons. I added multiple different supports to secure the buttons in place at the end. 
 
+
+Link to Slide documentation: 
+    - https://docs.google.com/presentation/d/1QzsSWxiKWwPrHV7YmQf5DmqH29nZHj_eP2cf2n3wY2U/edit?usp=sharing 
